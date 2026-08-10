@@ -16,7 +16,7 @@ You can view the official announcement post here:
 
 ## 📄 Offer Letter Reference
 
-The official Internship Offer Letter confirming my selection is attached to this repository as `Offer_Letter.png`.
+The official Internship Offer Letter confirming my selection is attached to this repository.
 
 ## 🧠 Key Learnings & Next Steps
 
