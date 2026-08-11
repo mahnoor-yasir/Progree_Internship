@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AERIS — Intelligent Weather Portal</title>
+<meta name="description" content="AERIS is a premium weather portal delivering real-time conditions, hourly and 5-day forecasts, air quality and atmospheric insights powered by OpenWeatherMap." />
+<meta name="theme-color" content="#0b1220" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="AERIS — Intelligent Weather Portal" />
+<meta property="og:description" content="Weather intelligence, beautifully delivered. Real-time weather, forecasts and atmospheric insights." />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/animations.css" />
+<link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body data-sky="default">
+<div class="sky-layer" aria-hidden="true"><span class="orb orb-a"></span><span class="orb orb-b"></span></div>
+
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<header class="app-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="#main" aria-label="AERIS home">
+      <img src="assets/icons/logo.svg" alt="" width="34" height="34" />
+      <span class="brand-text">
+        <strong>AERIS</strong>
+        <small>Intelligent Weather Portal</small>
+      </span>
+    </a>
+
+    <div class="header-meta" id="headerLocation" hidden>
+      <svg viewBox="0 0 24 24" class="ico" aria-hidden="true"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
+      <span id="headerLocationText">—</span>
+    </div>
+
+    <div class="header-actions">
+      <div class="unit-toggle" role="group" aria-label="Temperature unit">
+        <button type="button" class="unit-btn is-active" data-unit="metric" aria-pressed="true">°C</button>
+        <button type="button" class="unit-btn" data-unit="imperial" aria-pressed="false">°F</button>
+      </div>
+      <button type="button" class="icon-btn" id="themeToggle" aria-label="Toggle colour theme" title="Toggle theme">
+        <svg viewBox="0 0 24 24" class="ico" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg>
+      </button>
+      <button type="button" class="icon-btn" id="settingsToggle" aria-label="Open settings" aria-expanded="false" aria-controls="settingsPanel" title="Settings">
+        <svg viewBox="0 0 24 24" class="ico" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M4 12h2m12 0h2M12 4v2m0 12v2M6.3 6.3l1.4 1.4m8.6 8.6 1.4 1.4m0-11.4-1.4 1.4M7.7 16.3l-1.4 1.4"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Settings panel -->
+  <div class="settings-panel" id="settingsPanel" hidden>
+    <div class="wrap settings-grid">
+      <div class="setting">
+        <span class="setting-label" id="lblTemp">Temperature</span>
+        <div class="seg" role="group" aria-labelledby="lblTemp">
+          <button type="button" class="seg-btn" data-unit="metric">Celsius</button>
+          <button type="button" class="seg-btn" data-unit="imperial">Fahrenheit</button>
+        </div>
+      </div>
+      <div class="setting">
+        <span class="setting-label" id="lblWind">Wind speed</span>
+        <div class="seg" role="group" aria-labelledby="lblWind">
+          <button type="button" class="seg-btn" data-wind="kmh">km/h</button>
+          <button type="button" class="seg-btn" data-wind="ms">m/s</button>
+          <button type="button" class="seg-btn" data-wind="mph">mph</button>
+        </div>
+      </div>
+      <div class="setting">
+        <span class="setting-label" id="lblTheme">Theme</span>
+        <div class="seg" role="group" aria-labelledby="lblTheme">
+          <button type="button" class="seg-btn" data-theme="light">Light</button>
+          <button type="button" class="seg-btn" data-theme="dark">Dark</button>
+          <button type="button" class="seg-btn" data-theme="system">System</button>
+        </div>
+      </div>
+      <div class="setting">
+        <span class="setting-label">Preferences</span>
+        <label class="check"><input type="checkbox" id="reduceMotion" /> <span>Reduce motion</span></label>
+        <label class="check"><input type="checkbox" id="autoRefresh" /> <span>Auto refresh (10 min)</span></label>
+      </div>
+      <div class="setting">
+        <span class="setting-label">Stored data</span>
+        <div class="setting-row">
+          <button type="button" class="btn btn-ghost" id="clearHistory">Clear recent searches</button>
+          <button type="button" class="btn btn-ghost" id="clearFavorites">Clear favourites</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <!-- HERO / SEARCH -->
+  <section class="hero wrap" aria-labelledby="heroTitle">
+    <p class="eyebrow">Weather intelligence, beautifully delivered.</p>
+    <h1 id="heroTitle">Know the sky before you step outside.</h1>
+
+    <form class="search" id="searchForm" role="search" autocomplete="off">
+      <label class="sr-only" for="cityInput">Search for a city, region or country</label>
+      <svg viewBox="0 0 24 24" class="ico search-ico" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>
+      <input id="cityInput" name="city" type="search" placeholder="Search city, region or country…" aria-describedby="statusRegion" />
+      <button type="submit" class="btn btn-primary" id="searchBtn">
+        <span class="btn-label">Search</span>
+      </button>
+      <button type="button" class="btn btn-soft" id="geoBtn" title="Use my current location">
+        <svg viewBox="0 0 24 24" class="ico" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/><circle cx="12" cy="12" r="8"/></svg>
+        <span>Use my location</span>
+      </button>
+    </form>
+
+    <div class="chips" id="popularChips" aria-label="Popular locations">
+      <span class="chips-label">Popular</span>
+    </div>
+  </section>
+
+  <!-- ACCESSIBLE STATUS -->
+  <p id="statusRegion" class="sr-only" role="status" aria-live="polite"></p>
+
+  <!-- ERROR -->
+  <section class="wrap" id="errorState" hidden aria-labelledby="errorTitle">
+    <div class="card error-card">
+      <div class="error-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" class="ico"><path d="M12 8v5"/><circle cx="12" cy="16.4" r=".9" fill="currentColor" stroke="none"/><path d="M10.3 3.9 2.7 17.2A2 2 0 0 0 4.4 20h15.2a2 2 0 0 0 1.7-2.8L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+      </div>
+      <div>
+        <h2 id="errorTitle">Something went wrong</h2>
+        <p id="errorMessage">We couldn't complete that request.</p>
+        <button type="button" class="btn btn-primary" id="errorRetry">Try again</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- EMPTY / WELCOME -->
+  <section class="wrap" id="emptyState" aria-labelledby="emptyTitle">
+    <div class="card welcome">
+      <img src="assets/images/welcome.svg" alt="Illustration of a sun behind layered clouds" width="220" height="150" />
+      <h2 id="emptyTitle">Welcome to AERIS</h2>
+      <p>Search for a city to explore current weather, forecasts and atmospheric conditions. Everything you see is fetched live from OpenWeatherMap — no placeholder data.</p>
+    </div>
+  </section>
+
+  <!-- SKELETON LOADING -->
+  <section class="wrap" id="loadingState" hidden aria-hidden="true">
+    <div class="skeleton-grid">
+      <div class="sk sk-hero"></div>
+      <div class="sk sk-side"></div>
+      <div class="sk sk-row"></div>
+      <div class="sk sk-row"></div>
+    </div>
+  </section>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" hidden>
+    <!-- CURRENT -->
+    <section class="wrap dash-top" aria-labelledby="currentTitle">
+      <article class="card current-card">
+        <header class="current-head">
+          <div>
+            <h2 id="currentTitle"><span id="cityName">—</span><span class="country" id="countryName"></span></h2>
+            <p class="local-time"><span id="localDate">—</span> · <span id="localTime">—</span> local time</p>
+          </div>
+          <div class="current-tools">
+            <button type="button" class="icon-btn" id="favBtn" aria-pressed="false" aria-label="Save location to favourites" title="Save to favourites">
+              <svg viewBox="0 0 24 24" class="ico"><path d="m12 17.6-5.6 3 1.1-6.3-4.6-4.4 6.3-.9L12 3.2l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3Z"/></svg>
+            </button>
+            <button type="button" class="icon-btn" id="refreshBtn" aria-label="Refresh weather data" title="Refresh weather">
+              <svg viewBox="0 0 24 24" class="ico"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v4h-4"/></svg>
+            </button>
+          </div>
+        </header>
+
+        <div class="current-body">
+          <img id="currentIcon" class="current-icon" src="" alt="" width="120" height="120" />
+          <div class="temp-block">
+            <p class="temp" id="currentTemp">—</p>
+            <p class="condition" id="currentCondition">—</p>
+            <p class="feels" id="currentFeels">—</p>
+          </div>
+        </div>
+
+        <p class="updated">Last updated <span id="lastUpdated">—</span></p>
+      </article>
+
+      <div class="metrics" id="metrics" aria-label="Weather metrics">
+        <article class="card metric">
+          <h3>Humidity</h3>
+          <p class="metric-value" id="mHumidity">—</p>
+          <div class="bar"><span id="humidityBar" style="width:0%"></span></div>
+        </article>
+        <article class="card metric">
+          <h3>Wind</h3>
+          <p class="metric-value" id="mWind">—</p>
+          <p class="metric-sub"><span class="compass" id="windCompass" aria-hidden="true"><i></i></span> <span id="mWindDir">—</span></p>
+        </article>
+        <article class="card metric">
+          <h3>Pressure</h3>
+          <p class="metric-value" id="mPressure">—</p>
+          <p class="metric-sub" id="mPressureNote">—</p>
+        </article>
+        <article class="card metric">
+          <h3>Visibility</h3>
+          <p class="metric-value" id="mVisibility">—</p>
+          <p class="metric-sub" id="mVisibilityNote">—</p>
+        </article>
+        <article class="card metric">
+          <h3>Cloud cover</h3>
+          <p class="metric-value" id="mClouds">—</p>
+          <div class="bar"><span id="cloudBar" style="width:0%"></span></div>
+        </article>
+        <article class="card metric">
+          <h3>Feels like</h3>
+          <p class="metric-value" id="mFeels">—</p>
+          <p class="metric-sub" id="mFeelsNote">—</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- HOURLY -->
+    <section class="wrap section" id="hourlySection" aria-labelledby="hourlyTitle">
+      <h2 class="section-title" id="hourlyTitle">Next 24 hours</h2>
+      <div class="hourly-scroll" id="hourlyList" tabindex="0" aria-label="Hourly forecast, scrollable"></div>
+    </section>
+
+    <!-- CHART -->
+    <section class="wrap section" id="chartSection" aria-labelledby="chartTitle">
+      <h2 class="section-title" id="chartTitle">Temperature trend</h2>
+      <div class="card chart-card">
+        <div id="chartHost" role="img" aria-label="Temperature trend chart"></div>
+      </div>
+    </section>
+
+    <!-- 5 DAY -->
+    <section class="wrap section" id="forecastSection" aria-labelledby="forecastTitle">
+      <h2 class="section-title" id="forecastTitle">5-day forecast</h2>
+      <div class="forecast-grid" id="forecastList"></div>
+    </section>
+
+    <!-- INSIGHTS + SUN + AQI -->
+    <section class="wrap section insight-grid">
+      <article class="card" id="insightsCard" aria-labelledby="insightsTitle">
+        <h2 class="section-title sm" id="insightsTitle">Weather insights</h2>
+        <ul class="insights" id="insightsList"></ul>
+      </article>
+
+      <article class="card" id="sunCard" aria-labelledby="sunTitle">
+        <h2 class="section-title sm" id="sunTitle">Sunrise &amp; sunset</h2>
+        <div id="sunArcHost" role="img" aria-label="Daylight arc"></div>
+        <div class="sun-times">
+          <div><span class="lbl">Sunrise</span><strong id="sunriseTime">—</strong></div>
+          <div class="right"><span class="lbl">Sunset</span><strong id="sunsetTime">—</strong></div>
+        </div>
+        <p class="sun-note" id="daylightNote">—</p>
+      </article>
+
+      <article class="card" id="aqiCard" hidden aria-labelledby="aqiTitle">
+        <h2 class="section-title sm" id="aqiTitle">Air quality</h2>
+        <p class="aqi-value"><span id="aqiIndex">—</span><small>AQI</small></p>
+        <p class="aqi-cat" id="aqiCategory">—</p>
+        <ul class="pollutants" id="pollutants"></ul>
+      </article>
+    </section>
+  </div>
+
+  <!-- FAVOURITES / RECENT -->
+  <section class="wrap section lists-grid" aria-label="Saved locations">
+    <article class="card">
+      <div class="list-head">
+        <h2 class="section-title sm">Favourite locations</h2>
+        <button type="button" class="link-btn" id="clearFavorites2">Clear</button>
+      </div>
+      <div class="tag-list" id="favoritesList"></div>
+      <p class="muted sm" id="favEmpty">No favourites yet — use the star on a weather card to save one.</p>
+    </article>
+    <article class="card">
+      <div class="list-head">
+        <h2 class="section-title sm">Recent searches</h2>
+        <button type="button" class="link-btn" id="clearHistory2">Clear</button>
+      </div>
+      <div class="tag-list" id="historyList"></div>
+      <p class="muted sm" id="historyEmpty">Your recent searches will appear here.</p>
+    </article>
+  </section>
+</main>
+
+<footer class="app-footer">
+  <div class="wrap footer-inner">
+    <div>
+      <p class="footer-brand">AERIS — Intelligent Weather Portal</p>
+      <p class="muted sm">Real-time weather intelligence powered by OpenWeatherMap.</p>
+    </div>
+    <div class="muted sm">
+      <p>Built with HTML5, CSS3 and Vanilla JavaScript (Fetch API, async/await, LocalStorage, Geolocation).</p>
+      <p>Weather data © <a href="https://openweathermap.org/" target="_blank" rel="noopener noreferrer">OpenWeatherMap</a>. Not an official OpenWeatherMap product.</p>
+      <p>Frontend Development Internship Project — Task 3 · © <span id="year"></span> AERIS</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/api.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
