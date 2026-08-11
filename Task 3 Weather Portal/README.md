@@ -113,10 +113,6 @@ New keys can take **10–60 minutes** to activate. Until a valid key is present,
 aeris-weather-portal/
 ├── index.html            Single-page markup, all sections and states
 ├── README.md             This document
-├── assets/
-│   ├── icons/            favicon.svg, logo.svg
-│   ├── images/           welcome.svg illustration
-│   └── fonts/            (webfonts loaded from Google Fonts; system stack fallback)
 ├── css/
 │   ├── style.css         Design system, layout, components, themes
 │   ├── animations.css    Keyframes, transitions, reduced-motion rules
