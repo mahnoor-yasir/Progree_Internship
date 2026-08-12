@@ -1,4 +1,4 @@
-# LaunchFlow
+# Launch Flow
 
 **Plan better. Build faster. Launch smarter.**
 
