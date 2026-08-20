@@ -1,0 +1,105 @@
+<!-- Analytics Page Template -->
+<div class="analytics-container">
+    <div class="page-header">
+        <h2>Advanced Analytics</h2>
+        <p class="page-description">Deep dive into your business metrics and performance data</p>
+    </div>
+    
+    <!-- Analytics Filters -->
+    <div class="filter-bar">
+        <div class="filter-group">
+            <label>Date Range</label>
+            <input type="date" id="analyticsStartDate" />
+            <span>to</span>
+            <input type="date" id="analyticsEndDate" />
+        </div>
+        <div class="filter-group">
+            <label>Category</label>
+            <select id="analyticsCategory">
+                <option value="all">All Categories</option>
+                <option value="Software">Software</option>
+                <option value="Hardware">Hardware</option>
+                <option value="Services">Services</option>
+                <option value="Consulting">Consulting</option>
+            </select>
+        </div>
+        <button class="btn btn-primary" onclick="applyAnalyticsFilters()">
+            <i class="fas fa-filter"></i> Apply Filters
+        </button>
+        <button class="btn btn-secondary" onclick="resetAnalyticsFilters()">
+            <i class="fas fa-undo"></i> Reset
+        </button>
+    </div>
+
+    <!-- Analytics Charts Grid -->
+    <div class="chart-grid">
+        <div class="chart-card chart-full">
+            <div class="chart-header">
+                <h3 class="chart-title">Revenue Trends (Monthly)</h3>
+                <div class="chart-actions">
+                    <button onclick="exportChart('revenueTrendChart')">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button onclick="refreshChart('revenueTrendChart')">
+                        <i class="fas fa-sync"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="revenueTrendChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">Sales by Category</h3>
+                <div class="chart-actions">
+                    <button onclick="exportChart('categorySalesChart')">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="categorySalesChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">Regional Performance</h3>
+                <div class="chart-actions">
+                    <button onclick="exportChart('regionalChart')">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="regionalChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Table -->
+    <div class="activity-section">
+        <div class="section-header">
+            <h3 class="section-title">Detailed Metrics</h3>
+            <button class="btn btn-sm btn-primary" onclick="exportAnalyticsData()">
+                <i class="fas fa-file-export"></i> Export
+            </button>
+        </div>
+        <div class="table-container">
+            <table class="table" id="analyticsTable">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Revenue</th>
+                        <th>Orders</th>
+                        <th>Conversion</th>
+                        <th>Growth</th>
+                    </tr>
+                </thead>
+                <tbody id="analyticsTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>

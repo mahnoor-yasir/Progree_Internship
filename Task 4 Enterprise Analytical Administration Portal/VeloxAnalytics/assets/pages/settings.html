@@ -1,0 +1,179 @@
+<!-- Settings Page Template -->
+<div class="settings-container">
+    <div class="page-header">
+        <h2>Settings</h2>
+        <p class="page-description">Configure your application preferences and account settings</p>
+    </div>
+
+    <div class="settings-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:20px;">
+        <!-- Theme Settings -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-palette" style="color:var(--primary);"></i> Theme Preferences
+                </h3>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;">
+                    <span>Dark Mode</span>
+                    <label class="switch">
+                        <input type="checkbox" id="themeToggle" onchange="toggleTheme()" />
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid var(--border-color);">
+                    <span>High Contrast</span>
+                    <label class="switch">
+                        <input type="checkbox" id="contrastToggle" onchange="toggleContrast()" />
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid var(--border-color);">
+                    <span>Font Size</span>
+                    <div style="display:flex;gap:8px;">
+                        <button class="btn btn-sm btn-secondary" onclick="adjustFontSize(-2)">A-</button>
+                        <button class="btn btn-sm btn-secondary" onclick="adjustFontSize(0)">A</button>
+                        <button class="btn btn-sm btn-secondary" onclick="adjustFontSize(2)">A+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Settings -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-bell" style="color:var(--warning);"></i> Notifications
+                </h3>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;">
+                    <span>Email Notifications</span>
+                    <label class="switch">
+                        <input type="checkbox" checked />
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid var(--border-color);">
+                    <span>Push Notifications</span>
+                    <label class="switch">
+                        <input type="checkbox" />
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid var(--border-color);">
+                    <span>System Alerts</span>
+                    <label class="switch">
+                        <input type="checkbox" checked />
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Settings -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-user-cog" style="color:var(--success);"></i> Account
+                </h3>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;">
+                    <span>Username</span>
+                    <span style="color:var(--text-secondary);" id="settingsUsername">Admin User</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid var(--border-color);">
+                    <span>Email</span>
+                    <span style="color:var(--text-secondary);" id="settingsEmail">admin@velox.com</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid var(--border-color);">
+                    <span>Role</span>
+                    <span style="color:var(--text-secondary);" id="settingsRole">Administrator</span>
+                </div>
+                <button class="btn btn-primary" onclick="changePassword()" style="margin-top:8px;">
+                    <i class="fas fa-key"></i> Change Password
+                </button>
+            </div>
+        </div>
+
+        <!-- Data Management -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-database" style="color:var(--secondary);"></i> Data Management
+                </h3>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+                <button class="btn btn-secondary" onclick="clearCache()">
+                    <i class="fas fa-broom"></i> Clear Cache
+                </button>
+                <button class="btn btn-secondary" onclick="resetData()">
+                    <i class="fas fa-undo"></i> Reset Data
+                </button>
+                <button class="btn btn-danger" onclick="deleteAllData()">
+                    <i class="fas fa-trash"></i> Delete All Data
+                </button>
+                <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">
+                    Last backup: <span id="lastBackupTime">Never</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Switch CSS (add to components.css) -->
+<style>
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-tertiary);
+    transition: var(--transition);
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background: white;
+    transition: var(--transition);
+    border-radius: 50%;
+}
+
+.switch input:checked + .slider {
+    background: var(--primary);
+}
+
+.switch input:checked + .slider:before {
+    transform: translateX(22px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+</style>

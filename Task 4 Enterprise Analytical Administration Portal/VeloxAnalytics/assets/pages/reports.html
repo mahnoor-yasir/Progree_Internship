@@ -1,0 +1,93 @@
+<!-- Reports Page Template -->
+<div class="reports-container">
+    <div class="page-header">
+        <h2>Reports Center</h2>
+        <p class="page-description">Generate, schedule, and export comprehensive business reports</p>
+    </div>
+
+    <!-- Report Actions -->
+    <div class="report-actions" style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="generateReport()">
+            <i class="fas fa-plus"></i> Generate New Report
+        </button>
+        <button class="btn btn-secondary" onclick="scheduleReport()">
+            <i class="fas fa-clock"></i> Schedule Report
+        </button>
+        <button class="btn btn-secondary" onclick="exportAllReports()">
+            <i class="fas fa-file-archive"></i> Export All
+        </button>
+    </div>
+
+    <!-- Report Templates -->
+    <div class="section-header" style="margin-bottom:16px;">
+        <h3 class="section-title">Report Templates</h3>
+    </div>
+    <div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">
+        <div class="kpi-card" style="cursor:pointer;" onclick="generateReport('sales')">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <div class="kpi-icon blue" style="width:40px;height:40px;font-size:18px;">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div>
+                    <div class="kpi-label">Sales Report</div>
+                    <div style="font-size:13px;color:var(--text-muted);">Monthly summary</div>
+                </div>
+            </div>
+        </div>
+        <div class="kpi-card" style="cursor:pointer;" onclick="generateReport('performance')">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <div class="kpi-icon green" style="width:40px;height:40px;font-size:18px;">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div>
+                    <div class="kpi-label">Performance</div>
+                    <div style="font-size:13px;color:var(--text-muted);">Team metrics</div>
+                </div>
+            </div>
+        </div>
+        <div class="kpi-card" style="cursor:pointer;" onclick="generateReport('financial')">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <div class="kpi-icon orange" style="width:40px;height:40px;font-size:18px;">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <div>
+                    <div class="kpi-label">Financial</div>
+                    <div style="font-size:13px;color:var(--text-muted);">Revenue & costs</div>
+                </div>
+            </div>
+        </div>
+        <div class="kpi-card" style="cursor:pointer;" onclick="generateReport('customers')">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <div class="kpi-icon purple" style="width:40px;height:40px;font-size:18px;">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div>
+                    <div class="kpi-label">Customers</div>
+                    <div style="font-size:13px;color:var(--text-muted);">Acquisition data</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Reports -->
+    <div class="activity-section" style="margin-top:24px;">
+        <div class="section-header">
+            <h3 class="section-title">Recent Reports</h3>
+            <span style="font-size:13px;color:var(--text-muted);">Last 7 days</span>
+        </div>
+        <div class="table-container">
+            <table class="table" id="reportsTable">
+                <thead>
+                    <tr>
+                        <th>Report Name</th>
+                        <th>Type</th>
+                        <th>Generated</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="reportsTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
