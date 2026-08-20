@@ -1,0 +1,286 @@
+{
+  "sales": [
+    {
+      "id": 1,
+      "date": "2024-01-15",
+      "customer": "Acme Corp",
+      "product": "Enterprise Suite",
+      "category": "Software",
+      "amount": 12500,
+      "status": "Completed",
+      "region": "North America",
+      "salesperson": "Sarah Johnson",
+      "performance": "Excellent"
+    },
+    {
+      "id": 2,
+      "date": "2024-01-18",
+      "customer": "TechGlobal",
+      "product": "Servers",
+      "category": "Hardware",
+      "amount": 8700,
+      "status": "Completed",
+      "region": "Europe",
+      "salesperson": "Michael Chen",
+      "performance": "Good"
+    },
+    {
+      "id": 3,
+      "date": "2024-01-20",
+      "customer": "Innovate Inc",
+      "product": "Implementation",
+      "category": "Services",
+      "amount": 15400,
+      "status": "In Progress",
+      "region": "North America",
+      "salesperson": "Emily Rodriguez",
+      "performance": "Excellent"
+    },
+    {
+      "id": 4,
+      "date": "2024-01-22",
+      "customer": "CloudWorks",
+      "product": "Cloud Migration",
+      "category": "Cloud",
+      "amount": 22300,
+      "status": "Completed",
+      "region": "Asia Pacific",
+      "salesperson": "David Kim",
+      "performance": "Excellent"
+    },
+    {
+      "id": 5,
+      "date": "2024-01-25",
+      "customer": "DataStream",
+      "product": "Analytics Platform",
+      "category": "Software",
+      "amount": 18900,
+      "status": "Completed",
+      "region": "North America",
+      "salesperson": "Jessica Patel",
+      "performance": "Good"
+    },
+    {
+      "id": 6,
+      "date": "2024-01-28",
+      "customer": "SecureNet",
+      "product": "Security Audit",
+      "category": "Security",
+      "amount": 13200,
+      "status": "Pending",
+      "region": "Europe",
+      "salesperson": "Sarah Johnson",
+      "performance": "Average"
+    },
+    {
+      "id": 7,
+      "date": "2024-02-01",
+      "customer": "Quantum Solutions",
+      "product": "CRM Pro",
+      "category": "Software",
+      "amount": 9800,
+      "status": "Completed",
+      "region": "North America",
+      "salesperson": "Michael Chen",
+      "performance": "Good"
+    },
+    {
+      "id": 8,
+      "date": "2024-02-03",
+      "customer": "Nexus Systems",
+      "product": "Network Switches",
+      "category": "Hardware",
+      "amount": 11200,
+      "status": "Completed",
+      "region": "Asia Pacific",
+      "salesperson": "Emily Rodriguez",
+      "performance": "Excellent"
+    },
+    {
+      "id": 9,
+      "date": "2024-02-05",
+      "customer": "Pioneer Group",
+      "product": "Training",
+      "category": "Services",
+      "amount": 7600,
+      "status": "Completed",
+      "region": "South America",
+      "salesperson": "David Kim",
+      "performance": "Average"
+    },
+    {
+      "id": 10,
+      "date": "2024-02-08",
+      "customer": "Vanguard Tech",
+      "product": "DevOps Tools",
+      "category": "Software",
+      "amount": 20500,
+      "status": "In Progress",
+      "region": "North America",
+      "salesperson": "Jessica Patel",
+      "performance": "Good"
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "Software",
+      "count": 45,
+      "revenue": 450000,
+      "growth": 12.5
+    },
+    {
+      "id": 2,
+      "name": "Hardware",
+      "count": 30,
+      "revenue": 320000,
+      "growth": 8.2
+    },
+    {
+      "id": 3,
+      "name": "Services",
+      "count": 25,
+      "revenue": 280000,
+      "growth": 15.8
+    },
+    {
+      "id": 4,
+      "name": "Cloud",
+      "count": 20,
+      "revenue": 350000,
+      "growth": 22.3
+    },
+    {
+      "id": 5,
+      "name": "Security",
+      "count": 18,
+      "revenue": 210000,
+      "growth": 18.7
+    },
+    {
+      "id": 6,
+      "name": "Consulting",
+      "count": 12,
+      "revenue": 180000,
+      "growth": 10.4
+    }
+  ],
+  "regions": [
+    {
+      "id": 1,
+      "name": "North America",
+      "sales": 380,
+      "revenue": 850000,
+      "marketShare": 35.5
+    },
+    {
+      "id": 2,
+      "name": "Europe",
+      "sales": 280,
+      "revenue": 620000,
+      "marketShare": 25.8
+    },
+    {
+      "id": 3,
+      "name": "Asia Pacific",
+      "sales": 250,
+      "revenue": 540000,
+      "marketShare": 22.5
+    },
+    {
+      "id": 4,
+      "name": "South America",
+      "sales": 120,
+      "revenue": 260000,
+      "marketShare": 10.8
+    },
+    {
+      "id": 5,
+      "name": "Africa",
+      "sales": 60,
+      "revenue": 130000,
+      "marketShare": 5.4
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "name": "Admin User",
+      "email": "admin@velox.com",
+      "role": "Administrator",
+      "active": true
+    },
+    {
+      "id": 2,
+      "name": "Sarah Johnson",
+      "email": "sarah@velox.com",
+      "role": "Manager",
+      "active": true
+    },
+    {
+      "id": 3,
+      "name": "Michael Chen",
+      "email": "michael@velox.com",
+      "role": "Analyst",
+      "active": true
+    },
+    {
+      "id": 4,
+      "name": "Emily Rodriguez",
+      "email": "emily@velox.com",
+      "role": "Viewer",
+      "active": true
+    },
+    {
+      "id": 5,
+      "name": "David Kim",
+      "email": "david@velox.com",
+      "role": "Manager",
+      "active": false
+    }
+  ],
+  "performance": [
+    {
+      "month": "Jan",
+      "revenue": 45230,
+      "orders": 342,
+      "conversion": 3.2,
+      "growth": 8.0
+    },
+    {
+      "month": "Feb",
+      "revenue": 52890,
+      "orders": 423,
+      "conversion": 3.8,
+      "growth": 12.0
+    },
+    {
+      "month": "Mar",
+      "revenue": 48560,
+      "orders": 398,
+      "conversion": 3.5,
+      "growth": 5.0
+    },
+    {
+      "month": "Apr",
+      "revenue": 61340,
+      "orders": 456,
+      "conversion": 4.1,
+      "growth": 15.0
+    },
+    {
+      "month": "May",
+      "revenue": 58720,
+      "orders": 434,
+      "conversion": 3.9,
+      "growth": 10.0
+    },
+    {
+      "month": "Jun",
+      "revenue": 67890,
+      "orders": 512,
+      "conversion": 4.3,
+      "growth": 18.0
+    }
+  ]
+}
