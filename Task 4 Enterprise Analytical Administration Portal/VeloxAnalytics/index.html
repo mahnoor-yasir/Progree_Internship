@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Velox Analytics - Enterprise Intelligence Portal</title>
+    
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/dashboard.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+    <link rel="stylesheet" href="assets/css/responsive.css" />
+</head>
+<body>
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <img src="assets/images/logo.svg" alt="Velox Analytics" class="login-logo" />
+                <h1>Velox Analytics</h1>
+                <p>Enterprise Intelligence Portal</p>
+            </div>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="loginEmail"><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="loginEmail" placeholder="admin@velox.com" value="admin@velox.com" required />
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword"><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" value="admin123" required />
+                    <div class="password-toggle" onclick="togglePassword()">
+                        <i class="fas fa-eye" id="toggleIcon"></i>
+                    </div>
+                </div>
+                <div class="form-options">
+                    <label class="checkbox-label">
+                        <input type="checkbox" checked /> Remember me
+                    </label>
+                    <a href="#" class="forgot-link">Forgot password?</a>
+                </div>
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+                <div class="demo-credentials">
+                    <span>Demo: admin@velox.com / admin123</span>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div id="appContainer" style="display: none;">
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="assets/images/logo.svg" alt="Velox" class="sidebar-logo" />
+                <span class="sidebar-brand">Velox</span>
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#/dashboard" class="nav-link active" data-page="dashboard">
+                    <i class="fas fa-th-large"></i> <span>Dashboard</span>
+                </a>
+                <a href="#/analytics" class="nav-link" data-page="analytics">
+                    <i class="fas fa-chart-pie"></i> <span>Analytics</span>
+                </a>
+                <a href="#/reports" class="nav-link" data-page="reports">
+                    <i class="fas fa-file-alt"></i> <span>Reports</span>
+                </a>
+                <a href="#/data" class="nav-link" data-page="data">
+                    <i class="fas fa-table"></i> <span>Data Manager</span>
+                </a>
+                <a href="#/settings" class="nav-link" data-page="settings">
+                    <i class="fas fa-cog"></i> <span>Settings</span>
+                </a>
+                <a href="#/help" class="nav-link" data-page="help">
+                    <i class="fas fa-question-circle"></i> <span>Help</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="theme-toggle-container">
+                    <button class="theme-toggle-btn" onclick="toggleTheme()">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                        <span id="themeLabel">Dark Mode</span>
+                    </button>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content" id="mainContent">
+            <header class="top-header">
+                <div class="header-left">
+                    <h2 id="pageTitle">Dashboard</h2>
+                    <span class="breadcrumb" id="breadcrumb">Home / Dashboard</span>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search..." id="globalSearch" />
+                    </div>
+                    <button class="notification-btn" onclick="toggleNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notificationBadge">5</span>
+                    </button>
+                    <div class="user-profile" onclick="toggleUserMenu()">
+                        <img src="https://ui-avatars.com/api/?name=Admin+User&background=2563EB&color=fff&size=40" alt="User" />
+                        <span class="user-name">Admin</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </header>
+
+            <div class="notification-panel" id="notificationPanel">
+                <div class="notification-header">
+                    <h3>Notifications</h3>
+                    <button onclick="clearAllNotifications()" class="clear-btn">
+                        <i class="fas fa-check-double"></i> Clear All
+                    </button>
+                </div>
+                <div class="notification-list" id="notificationList">
+                    <div class="empty-state">
+                        <i class="fas fa-bell-slash"></i>
+                        <h3>No notifications</h3>
+                        <p>You're all caught up!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="user-menu-dropdown" id="userMenuDropdown">
+                <a href="#/profile"><i class="fas fa-user"></i> My Profile</a>
+                <a href="#/settings"><i class="fas fa-cog"></i> Settings</a>
+                <a href="#/help"><i class="fas fa-question-circle"></i> Help</a>
+                <hr />
+                <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+
+            <div class="page-content" id="pageContent">
+                <!-- Dynamic Content -->
+            </div>
+        </main>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="assets/js/dataService.js"></script>
+    <script src="assets/js/theme.js"></script>
+    <script src="assets/js/filters.js"></script>
+    <script src="assets/js/notifications.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
