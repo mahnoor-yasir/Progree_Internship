@@ -110,16 +110,6 @@ VeloxAnalytics/
 
 ---
 
-## 🔐 Demo Credentials
-
-| Role | Email | Password |
-|------|-------|----------|
-| **Administrator** | admin@velox.com | admin123 |
-| **Manager** | sarah@velox.com | admin123 |
-| **Analyst** | michael@velox.com | admin123 |
-| **Viewer** | emily@velox.com | admin123 |
-
----
 
 ## 📊 Dashboard Features
 
