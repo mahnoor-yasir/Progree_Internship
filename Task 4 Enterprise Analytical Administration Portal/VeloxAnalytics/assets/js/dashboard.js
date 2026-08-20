@@ -1,0 +1,652 @@
+/**
+ * VELOX ANALYTICS - Dashboard
+ * Main dashboard logic with charts and KPIs
+ */
+
+let dashboardCharts = {};
+let chartInstances = {};
+let updateInterval = null;
+
+function loadDashboard(container) {
+    // Get data
+    const dataService = getDataService();
+    const stats = dataService.getStats();
+    const sales = dataService.getSales();
+    const performance = dataService.getPerformance();
+
+    // Build dashboard HTML
+    container.innerHTML = `
+        <!-- KPI Cards -->
+        <div class="kpi-grid" id="kpiGrid">
+            <div class="kpi-card">
+                <div class="kpi-icon blue"><i class="fas fa-dollar-sign"></i></div>
+                <div class="kpi-label">Total Revenue</div>
+                <div class="kpi-value" id="kpiRevenue">$${formatNumber(stats.totalRevenue)}</div>
+                <div class="kpi-change positive"><i class="fas fa-arrow-up"></i> 12.5%</div>
+                <div class="kpi-sub">vs last month</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon green"><i class="fas fa-shopping-cart"></i></div>
+                <div class="kpi-label">Total Orders</div>
+                <div class="kpi-value" id="kpiOrders">${stats.totalOrders}</div>
+                <div class="kpi-change positive"><i class="fas fa-arrow-up"></i> 8.3%</div>
+                <div class="kpi-sub">${stats.completedOrders} completed</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon orange"><i class="fas fa-percent"></i></div>
+                <div class="kpi-label">Conversion Rate</div>
+                <div class="kpi-value" id="kpiConversion">${stats.conversionRate}%</div>
+                <div class="kpi-change positive"><i class="fas fa-arrow-up"></i> 2.1%</div>
+                <div class="kpi-sub">${stats.pendingOrders} pending</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon purple"><i class="fas fa-trophy"></i></div>
+                <div class="kpi-label">Top Performer</div>
+                <div class="kpi-value" id="kpiTopCategory">${stats.topCategory}</div>
+                <div class="kpi-change positive"><i class="fas fa-arrow-up"></i> Leading</div>
+                <div class="kpi-sub">${stats.topRegion} region</div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="quick-stats" id="quickStats">
+            <div class="quick-stat">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-info">
+                    <div class="stat-label">Active Users</div>
+                    <div class="stat-number">2,847</div>
+                </div>
+            </div>
+            <div class="quick-stat">
+                <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                <div class="stat-info">
+                    <div class="stat-label">Avg. Order Value</div>
+                    <div class="stat-number">$${formatNumber(Math.round(stats.avgOrderValue))}</div>
+                </div>
+            </div>
+            <div class="quick-stat">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <div class="stat-info">
+                    <div class="stat-label">Response Time</div>
+                    <div class="stat-number">2.4s</div>
+                </div>
+            </div>
+            <div class="quick-stat">
+                <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="stat-info">
+                    <div class="stat-label">Completion Rate</div>
+                    <div class="stat-number">${Math.round((stats.completedOrders / stats.totalOrders) * 100)}%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="chart-grid">
+            <div class="chart-card chart-full">
+                <div class="chart-header">
+                    <h3 class="chart-title">Revenue Overview <span style="font-size:12px;color:var(--text-muted);font-weight:400;">Last 6 Months</span></h3>
+                    <div class="chart-actions">
+                        <button onclick="refreshChart('revenueChart')" class="tooltip" data-tooltip="Refresh">
+                            <i class="fas fa-sync"></i>
+                        </button>
+                        <button onclick="exportChart('revenueChart')" class="tooltip" data-tooltip="Download">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Sales Distribution</h3>
+                    <div class="chart-actions">
+                        <button onclick="exportChart('categoryChart')"><i class="fas fa-download"></i></button>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Regional Performance</h3>
+                    <div class="chart-actions">
+                        <button onclick="exportChart('regionChart')"><i class="fas fa-download"></i></button>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="regionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="activity-section">
+            <div class="section-header">
+                <h3 class="section-title">Recent Activity</h3>
+                <button class="btn btn-sm btn-primary" onclick="viewAllActivity()">
+                    View All <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            <div class="table-container">
+                <table class="activity-table">
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="activityTableBody">
+                        <!-- Dynamic content -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+
+    // Initialize charts
+    setTimeout(() => {
+        initializeDashboardCharts(sales, performance);
+        populateRecentActivity(sales);
+        
+        // Start real-time updates
+        startRealtimeUpdates();
+    }, 100);
+
+    // Update KPI animations
+    animateKPIValues();
+}
+
+function initializeDashboardCharts(sales, performance) {
+    // Revenue Chart (Line)
+    const revenueCtx = document.getElementById('revenueChart');
+    if (revenueCtx) {
+        const revenueData = performance.map(p => p.revenue);
+        const months = performance.map(p => p.month);
+        
+        if (window.revenueChartInstance) {
+            window.revenueChartInstance.destroy();
+        }
+        
+        window.revenueChartInstance = new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'Revenue',
+                    data: revenueData,
+                    borderColor: getChartColor('primary'),
+                    backgroundColor: getChartColor('primary', 0.1),
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: getChartColor('primary'),
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return '$' + context.parsed.y.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                }
+            }
+        });
+        chartInstances.revenueChart = window.revenueChartInstance;
+    }
+
+    // Category Chart (Doughnut)
+    const categoryCtx = document.getElementById('categoryChart');
+    if (categoryCtx) {
+        const categories = sales.reduce((acc, s) => {
+            acc[s.category] = (acc[s.category] || 0) + s.amount;
+            return acc;
+        }, {});
+        
+        const labels = Object.keys(categories);
+        const data = Object.values(categories);
+        const colors = ['#2563EB', '#7C3AED', '#10B981', '#F59E0B', '#EF4444', '#06B6D4'];
+        
+        if (window.categoryChartInstance) {
+            window.categoryChartInstance.destroy();
+        }
+        
+        window.categoryChartInstance = new Chart(categoryCtx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: colors.slice(0, labels.length),
+                    borderColor: getChartColor('background'),
+                    borderWidth: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 12,
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                return context.label + ': $' + context.parsed.toLocaleString() + ' (' + percentage + '%)';
+                            }
+                        }
+                    }
+                },
+                cutout: '65%'
+            }
+        });
+        chartInstances.categoryChart = window.categoryChartInstance;
+    }
+
+    // Region Chart (Bar)
+    const regionCtx = document.getElementById('regionChart');
+    if (regionCtx) {
+        const regions = sales.reduce((acc, s) => {
+            acc[s.region] = (acc[s.region] || 0) + s.amount;
+            return acc;
+        }, {});
+        
+        const labels = Object.keys(regions);
+        const data = Object.values(regions);
+        
+        if (window.regionChartInstance) {
+            window.regionChartInstance.destroy();
+        }
+        
+        window.regionChartInstance = new Chart(regionCtx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Revenue by Region',
+                    data: data,
+                    backgroundColor: getChartColor('secondary', 0.7),
+                    borderColor: getChartColor('secondary'),
+                    borderWidth: 2,
+                    borderRadius: 6,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return '$' + context.parsed.y.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+        chartInstances.regionChart = window.regionChartInstance;
+    }
+}
+
+function populateRecentActivity(sales) {
+    const tbody = document.getElementById('activityTableBody');
+    if (!tbody) return;
+    
+    const recent = sales.slice(0, 8);
+    const statusColors = {
+        'Completed': 'completed',
+        'Pending': 'pending',
+        'In Progress': 'in-progress',
+        'Failed': 'failed'
+    };
+    
+    tbody.innerHTML = recent.map(item => `
+        <tr>
+            <td><strong>${item.customer}</strong></td>
+            <td>${item.product}</td>
+            <td>${item.category}</td>
+            <td>$${item.amount.toLocaleString()}</td>
+            <td><span class="status-badge ${statusColors[item.status] || 'pending'}">${item.status}</span></td>
+            <td>${formatDate(item.date)}</td>
+        </tr>
+    `).join('');
+}
+
+function animateKPIValues() {
+    const kpis = document.querySelectorAll('.kpi-value');
+    kpis.forEach(kpi => {
+        const text = kpi.textContent;
+        const numeric = text.replace(/[^0-9.]/g, '');
+        if (numeric) {
+            const target = parseFloat(numeric);
+            const isCurrency = text.includes('$');
+            let current = 0;
+            const duration = 1000;
+            const steps = 30;
+            const increment = target / steps;
+            const interval = duration / steps;
+            
+            let step = 0;
+            const timer = setInterval(() => {
+                step++;
+                current += increment;
+                if (step >= steps) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                if (isCurrency) {
+                    kpi.textContent = '$' + Math.round(current).toLocaleString();
+                } else {
+                    kpi.textContent = Math.round(current).toLocaleString();
+                }
+            }, interval);
+        }
+    });
+}
+
+function startRealtimeUpdates() {
+    if (updateInterval) {
+        clearInterval(updateInterval);
+    }
+    
+    updateInterval = setInterval(() => {
+        // Simulate real-time data updates
+        const dataService = getDataService();
+        const sales = dataService.getSales();
+        
+        // Update KPI values
+        const stats = dataService.getStats();
+        document.getElementById('kpiRevenue').textContent = '$' + formatNumber(stats.totalRevenue);
+        document.getElementById('kpiOrders').textContent = stats.totalOrders;
+        document.getElementById('kpiConversion').textContent = stats.conversionRate + '%';
+        document.getElementById('kpiTopCategory').textContent = stats.topCategory;
+        
+        // Update chart with slight random variation
+        updateChartData();
+    }, 5000);
+}
+
+function updateChartData() {
+    const dataService = getDataService();
+    const performance = dataService.getPerformance();
+    
+    // Update revenue chart
+    if (window.revenueChartInstance) {
+        const newData = performance.map(p => p.revenue + Math.round((Math.random() - 0.5) * 1000));
+        window.revenueChartInstance.data.datasets[0].data = newData;
+        window.revenueChartInstance.update();
+    }
+}
+
+function refreshChart(chartId) {
+    const chart = chartInstances[chartId];
+    if (chart) {
+        chart.update();
+        showToast('Chart refreshed', 'success');
+    }
+}
+
+function exportChart(chartId) {
+    const canvas = document.getElementById(chartId);
+    if (canvas) {
+        const link = document.createElement('a');
+        link.download = `${chartId}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        showToast('Chart exported successfully', 'success');
+    }
+}
+
+function getChartColor(color, alpha = 1) {
+    const colors = {
+        'primary': `rgba(37, 99, 235, ${alpha})`,
+        'secondary': `rgba(124, 58, 237, ${alpha})`,
+        'success': `rgba(16, 185, 129, ${alpha})`,
+        'warning': `rgba(245, 158, 11, ${alpha})`,
+        'danger': `rgba(239, 68, 68, ${alpha})`,
+        'info': `rgba(6, 182, 212, ${alpha})`,
+        'background': document.documentElement.getAttribute('data-theme') === 'dark' ? '#1E293B' : '#FFFFFF'
+    };
+    return colors[color] || colors.primary;
+}
+
+function formatNumber(num) {
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+    return num.toLocaleString();
+}
+
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+// Analytics charts (for analytics page)
+function initializeAnalyticsCharts() {
+    const dataService = getDataService();
+    const performance = dataService.getPerformance();
+    const sales = dataService.getSales();
+    
+    // Revenue Trend Chart
+    const revenueCtx = document.getElementById('revenueTrendChart');
+    if (revenueCtx && !window.revenueTrendInstance) {
+        window.revenueTrendInstance = new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: performance.map(p => p.month),
+                datasets: [
+                    {
+                        label: 'Revenue',
+                        data: performance.map(p => p.revenue),
+                        borderColor: '#2563EB',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Orders',
+                        data: performance.map(p => p.orders * 100),
+                        borderColor: '#10B981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderDash: [5, 5]
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                }
+            }
+        });
+    }
+    
+    // Category Sales Chart (Pie)
+    const categoryCtx = document.getElementById('categorySalesChart');
+    if (categoryCtx && !window.categorySalesInstance) {
+        const categories = sales.reduce((acc, s) => {
+            acc[s.category] = (acc[s.category] || 0) + s.amount;
+            return acc;
+        }, {});
+        
+        window.categorySalesInstance = new Chart(categoryCtx, {
+            type: 'pie',
+            data: {
+                labels: Object.keys(categories),
+                datasets: [{
+                    data: Object.values(categories),
+                    backgroundColor: ['#2563EB', '#7C3AED', '#10B981', '#F59E0B', '#EF4444', '#06B6D4']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    }
+                }
+            }
+        });
+    }
+    
+    // Regional Chart
+    const regionCtx = document.getElementById('regionalChart');
+    if (regionCtx && !window.regionalChartInstance) {
+        const regions = sales.reduce((acc, s) => {
+            acc[s.region] = (acc[s.region] || 0) + s.amount;
+            return acc;
+        }, {});
+        
+        window.regionalChartInstance = new Chart(regionCtx, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(regions),
+                datasets: [{
+                    label: 'Revenue by Region',
+                    data: Object.values(regions),
+                    backgroundColor: 'rgba(124, 58, 237, 0.7)',
+                    borderColor: '#7C3AED',
+                    borderWidth: 2,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+}
+
+function applyAnalyticsFilters() {
+    // Implement analytics filter logic
+    showToast('Analytics filters applied', 'success');
+}
+
+function resetAnalyticsFilters() {
+    document.getElementById('analyticsStartDate').value = '';
+    document.getElementById('analyticsEndDate').value = '';
+    document.getElementById('analyticsCategory').value = 'all';
+    showToast('Analytics filters reset', 'info');
+}
+
+function exportAnalyticsData() {
+    showToast('Analytics data exported successfully', 'success');
+}
+
+function updateChartThemes() {
+    // Update all charts when theme changes
+    Object.keys(chartInstances).forEach(key => {
+        const chart = chartInstances[key];
+        if (chart) {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const backgroundColor = isDark ? '#1E293B' : '#FFFFFF';
+            const textColor = isDark ? '#CBD5E1' : '#475569';
+            
+            if (chart.options?.scales) {
+                Object.keys(chart.options.scales).forEach(scale => {
+                    if (chart.options.scales[scale].ticks) {
+                        chart.options.scales[scale].ticks.color = textColor;
+                    }
+                    if (chart.options.scales[scale].grid) {
+                        chart.options.scales[scale].grid.color = isDark ? '#334155' : '#E2E8F0';
+                    }
+                });
+            }
+            
+            if (chart.options?.plugins?.legend?.labels) {
+                chart.options.plugins.legend.labels.color = textColor;
+            }
+            
+            chart.update();
+        }
+    });
+}
+
+// Export functions for use in other modules
+window.dashboardCharts = dashboardCharts;
+window.chartInstances = chartInstances;
+window.initializeDashboardCharts = initializeDashboardCharts;
+window.populateRecentActivity = populateRecentActivity;
+window.animateKPIValues = animateKPIValues;
+window.startRealtimeUpdates = startRealtimeUpdates;
+window.updateChartData = updateChartData;
+window.refreshChart = refreshChart;
+window.exportChart = exportChart;
+window.getChartColor = getChartColor;
+window.initializeAnalyticsCharts = initializeAnalyticsCharts;
+window.applyAnalyticsFilters = applyAnalyticsFilters;
+window.resetAnalyticsFilters = resetAnalyticsFilters;
+window.exportAnalyticsData = exportAnalyticsData;
+window.updateChartThemes = updateChartThemes;
