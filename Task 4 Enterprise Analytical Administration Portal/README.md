@@ -370,7 +370,3 @@ This project demonstrates:
 ---
 
 *Built with ❤️ for enterprise intelligence*
-```
-
-
-
