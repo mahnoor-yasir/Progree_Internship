@@ -26,7 +26,7 @@ The official Internship Offer Letter confirming my selection is attached to this
 
 ## ✨ Acknowledgements
 
-I would like to thank **Umar Mushtaq**, Founder & CEO of Progree, and the entire Progree team for providing this valuable opportunity.
+I would like to thank the entire Progree team for providing this valuable opportunity.
 
 ---
 
